@@ -55,8 +55,8 @@ function updateTeslaPrice(sliderVal) {
     var dateOfStockPrice = new Date();
 
     dateOfStockPrice = new Date(dateOfStockPrice.getTime() - offset);
-    var oneDayAgo = 60*60*24*1*1000;
-    var oneDayBefore = new Date(dateOfStockPrice.getTime() - oneDayAgo);
+    var oneDay = 60*60*24*1*1000;
+    var oneDayBefore = new Date(dateOfStockPrice.getTime() - oneDay);
     
     // Bars must have a start and end in the query, so we use one day as an interval.
     getBars(symbol, oneDayBefore.toISOString(), dateOfStockPrice.toISOString(), limit=25, undefined, "1Hour", "all", function(err, body) {
