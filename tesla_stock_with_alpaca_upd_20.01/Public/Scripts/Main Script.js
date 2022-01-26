@@ -47,18 +47,19 @@ var getBars = function(symbol, start, end, limit, page_token, timeframe, adjustm
     });
 };
 
-// This function will update the textbox according to $TLSA's high at the given date
+var symbol = "TSLA"
+// This function will update the textbox according to the symbol's high at the given date
 function updateTeslaPrice(sliderVal) {
     global.updated = true;
     var offset = sliderToDate(sliderVal)
     var dateOfStockPrice = new Date();
 
     dateOfStockPrice = new Date(dateOfStockPrice.getTime() - offset);
-    var sevenDaysAgo = 60*60*24*7*1000;
-    var oneWeekAgo = new Date(dateOfStockPrice.getTime() - sevenDaysAgo);
+    var oneDayAgo = 60*60*24*1*1000;
+    var oneDayBefore = new Date(dateOfStockPrice.getTime() - oneDayAgo);
     
-    // Gets the bars for a whole week even though we only need one bar. Change later
-    getBars(symbol, oneWeekAgo.toISOString(), dateOfStockPrice.toISOString(), undefined, undefined, "1Hour", "all", function(err, body) {
+    // Bars must have a start and end in the query, so we use one day as an interval.
+    getBars(symbol, oneDayBefore.toISOString(), dateOfStockPrice.toISOString(), limit=25, undefined, "1Hour", "all", function(err, body) {
         if (err) {
             print("ERROR: API did not return correctly");
         } else {
@@ -73,10 +74,8 @@ function updateTeslaPrice(sliderVal) {
     });
 }
 
-var symbol = "TSLA"
-
+// Set callback for slider and initialization of slider values
 script.colorPickerScript.api.addCallback("onSliderValueChanged", updateTeslaPrice);
-
 updateTeslaPrice(script.initialValue);
 script.colorPickerScript.api.setSliderValue(script.initialValue);
 

@@ -12,7 +12,7 @@ function sliderToDate(sliderVal) {
     const fiveYearsAgo = 60*60*24*365*5*1000;
     const fifteenMinsAgo = 15*60*1000;
     offset = sliderVal * (fiveYearsAgo-fifteenMinsAgo) + fifteenMinsAgo
-    return(offset)
+    return offset
 }
 
 // Handles API responses, checking for errors and success
@@ -47,19 +47,19 @@ var getBars = function(symbol, start, end, limit, page_token, timeframe, adjustm
     });
 };
 
-// This function will update the textbox according to $TLSA's high at the given date
+var symbol = "TSLA"
+// This function will update the textbox according to the symbol's high at the given date
 function updateTeslaPrice(sliderVal) {
-//    print(sliderVal)
-    // Alpaca API requires calls to be 15 minutes ago or more
+    global.updated = true;
     var offset = sliderToDate(sliderVal)
     var dateOfStockPrice = new Date();
 
     dateOfStockPrice = new Date(dateOfStockPrice.getTime() - offset);
-    var sevenDaysAgo = 60*60*24*7*1000;
-    var oneWeekAgo = new Date(dateOfStockPrice.getTime() - sevenDaysAgo);
+    var oneDayAgo = 60*60*24*1*1000;
+    var oneDayBefore = new Date(dateOfStockPrice.getTime() - oneDayAgo);
     
-    // Gets the bars for a whole week even though we only need one bar. Change later
-    getBars(symbol, oneWeekAgo.toISOString(), dateOfStockPrice.toISOString(), undefined, undefined, "1Hour", "all", function(err, body) {
+    // Bars must have a start and end in the query, so we use one day as an interval.
+    getBars(symbol, oneDayBefore.toISOString(), dateOfStockPrice.toISOString(), limit=25, undefined, "1Hour", "all", function(err, body) {
         if (err) {
             print("ERROR: API did not return correctly");
         } else {
@@ -68,20 +68,14 @@ function updateTeslaPrice(sliderVal) {
             highPrice = body.bars[last_idx].h.toFixed(2);
             //updates values for instantiating
             global.number = highPrice;
-            global.updated = true;
-            
-            script.t.text = "#TSLA = $" + String(highPrice);
-            script.tDate.text = String(oneWeekAgo).slice(4, -24);
-            
-            // Read about the parsed bodys data here https://alpaca.markets/docs/api-documentation/api-v2/market-data/alpaca-data-api-v2/historical/#bars
+            script.t.text = "$TSLA = $" + String(highPrice);
+            script.tDate.text = String(dateOfStockPrice).slice(4, -24);
         } 
     });
 }
 
-var symbol = "TSLA"
-
+// Set callback for slider and initialization of slider values
 script.colorPickerScript.api.addCallback("onSliderValueChanged", updateTeslaPrice);
-
 updateTeslaPrice(script.initialValue);
 script.colorPickerScript.api.setSliderValue(script.initialValue);
 
