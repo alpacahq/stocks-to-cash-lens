@@ -49,7 +49,7 @@ var getBars = function(symbol, start, end, limit, page_token, timeframe, adjustm
 
 var symbol = "TSLA"
 // This function will update the textbox according to the symbol's high at the given date
-function updateTeslaPrice(sliderVal) {
+function updateStockPrice(sliderVal) {
     var offset = sliderToDate(sliderVal)
     var dateOfStockPrice = new Date();
 
@@ -90,7 +90,7 @@ function debounce(cb, timeout) {
 }
 
 // Set callback for slider and initialization of slider values
-script.colorPickerScript.api.addCallback("onSliderValueChanged", debounce(updateTeslaPrice, 0.03));
-updateTeslaPrice(script.initialValue);
+script.colorPickerScript.api.addCallback("onSliderValueChanged", debounce(updateStockPrice, 0.03));
+updateStockPrice(script.initialValue);
 script.colorPickerScript.api.setSliderValue(script.initialValue);
 
